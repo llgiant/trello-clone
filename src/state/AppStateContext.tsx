@@ -1,6 +1,9 @@
-import {createContext, useReducer, useContext, FC, Dispatch} from 'react'
+import {createContext, useContext, FC, Dispatch} from 'react'
 import {appStateReducer, AppState, List, Task} from "./appStateReducer"
 import {Action} from "./actions";
+
+//a library that allows you to mutate an object and it will create a new object instance based on your mutations
+import {useImmerReducer} from "use-immer"
 
 //define a context to propagate the data across the whole application
 /*
@@ -20,21 +23,6 @@ type AppStateContextProps = {
     getTasksByListId(id: string): Task[]
     dispatch: Dispatch<Action>
 }
-
-// type Task = {
-//     id:string
-//     text: string
-// }
-//
-// type List = {
-//     id:string
-//     text:string
-//     tasks: Task[]
-// }
-//
-// export type AppState = {
-//     lists: List[]
-// }
 
 const appData: AppState = {
     lists: [
@@ -59,7 +47,7 @@ const appData: AppState = {
 
 export const AppStateProvider: FC = ({children}) => {
     // we get the state value from the reducer and also provide the dispatch method through the context.
-    const [state, dispatch] = useReducer(appStateReducer, appData)
+    const [state, dispatch] = useImmerReducer(appStateReducer, appData)
     const {lists} = appData
 
     const getTasksByListId = (id: string) => {
