@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, KeyboardEvent} from "react"
 import { NewItemFormContainer, NewItemButton, NewItemInput } from "./styles"
 import {useFocus} from "./utils/useFocus";
 
@@ -12,7 +12,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
 
     //the items could be created by pressing the Enter key instead of clicking the Create button.
     const handleAddText = (
-        event: React.KeyboardEvent<HTMLInputElement>
+        event: KeyboardEvent<HTMLInputElement>
     ) => {
         if (event.key === "Enter") {
             onAdd(text)
