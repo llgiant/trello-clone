@@ -17,5 +17,18 @@ export const moveItem = <TItem>(array: TItem[], from: number, to: number) => {
 //We want to be able to work with arrays with any kind of items in them, so we use a
 // type variable TItem.
 
+export function removeItemAtIndex<TItem>(array: TItem[], index: number)
+{
+    return [...array.slice(0, index), ...array.slice(index + 1)]
+}
+
+export function insertItemAtIndex<TItem>(
+    array: TItem[],
+    item: TItem,
+    index: number
+) {
+    return [...array.slice(0, index), item, ...array.slice(index)]
+}
+
 
 
