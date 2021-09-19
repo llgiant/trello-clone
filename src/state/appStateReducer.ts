@@ -17,7 +17,14 @@ export type AppState = {
     lists: List[]
     draggedItem: DragItem | null;
 }
-
+const sourceListIndex = findItemIndexById(
+    draft.lists,
+    sourceColumnId
+)
+const targetListIndex = findItemIndexById(
+    draft.lists,
+    targetColumnId
+)
 
 /*
 We also updated the return type of our reducer. The type is now AppState | void.
@@ -58,13 +65,19 @@ export const appStateReducer = (draft: AppState, action: Action): AppState | voi
             draft.lists = moveItem(draft.lists, dragIndex, hoverIndex)
             break
         }
-
-
         case "SET_DRAGGED_ITEM": {
             draft.draggedItem = action.payload
             break
         }
+        case "MOVE_TASK": {
+            const {
+                draggedItemId,
+                hoveredItemId,
+                sourceColumnId,
+                targetColumnId
+            } = action.payload
 
+        }
         default: {
             break
         }

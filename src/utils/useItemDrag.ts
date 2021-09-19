@@ -2,6 +2,8 @@ import { useDrag } from "react-dnd"
 import { useAppState } from "../state/AppStateContext"
 import { DragItem } from "../DragItem"
 import { setDraggedItem } from "../state/actions"
+import { useEffect } from "react"
+import { getEmptyImage } from "react-dnd-html5-backend"
 
 //The dragging logic will be similar for both cards and columns. I suggest we move it
 // to a custom hook.
@@ -12,7 +14,7 @@ import { setDraggedItem } from "../state/actions"
 
 export const useItemDrag = (item: DragItem) => {
     const { dispatch } = useAppState()
-    const [, drag] = useDrag({
+    const [, drag, preview] = useDrag({
         type: item.type,
         item: () => {
             dispatch(setDraggedItem(item))
@@ -20,8 +22,12 @@ export const useItemDrag = (item: DragItem) => {
         },
         end: () => dispatch(setDraggedItem(null))
     })
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true })
+    }, [preview])
     return { drag }
 }
+
 
 //Internally this hook uses useDrag from react-dnd. We pass an options object to it.
 // • type - it will be CARD or COLUMN

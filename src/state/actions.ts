@@ -1,6 +1,6 @@
 // ADD_LIST - contains the list title.
 
-import { DragItem } from "../DragItem"
+import {DragItem} from "../DragItem"
 
 //ADD_TASK - text is the task text, and listId is the reference to the list it belongs to.
 export type Action =
@@ -22,7 +22,15 @@ export type Action =
     type: "SET_DRAGGED_ITEM"
     payload: DragItem | null
 }
-
+    | {
+    type: "MOVE_TASK"
+    payload: {
+        draggedItemId: string
+        hoveredItemId: string | null
+        sourceColumnId: string
+        targetColumnId: string
+    }
+}
 //It will hold the DragItem that we defined earlier. We need to be able to set it to null if
 // we are not dragging anything. We are not using the undefined here because it would
 // mean that the field could be omitted. In our case it’s not true, it can just be empty
@@ -43,6 +51,20 @@ export const setDraggedItem = (
     payload: draggedItem
 })
 
+export const moveTask = (
+    draggedItemId: string,
+    hoveredItemId: string | null,
+    sourceColumnId: string,
+    targetColumnId: string
+): Action => ({
+    type: "MOVE_TASK",
+    payload: {
+        draggedItemId,
+        hoveredItemId,
+        sourceColumnId,
+        targetColumnId
+    }
+})
 
 export const moveList = (draggedId: string, hoverId: string,): Action =>
     ({

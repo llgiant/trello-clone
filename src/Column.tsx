@@ -1,38 +1,66 @@
 import {ColumnContainer, ColumnTitle} from "./styles";
 import {AddNewItem} from "./AddNewItem";
-import { useAppState } from "./state/AppStateContext"
-import { Card } from "./Card"
-import { addTask } from "./state/actions"
-import { useRef } from "react"
-import { useItemDrag } from "./utils/useItemDrag"
+import {useAppState} from "./state/AppStateContext"
+import {Card} from "./Card"
+import {addTask, moveList} from "./state/actions"
+import {useRef} from "react"
+import {useItemDrag} from "./utils/useItemDrag"
+import {useDrop} from "react-dnd"
+import {isHidden} from "./utils/isHidden"
+
 //Define the ref that will hold the reference to the dragged div element. Get the drag
 // connector function from the useItemDrag. Pass the ref to the drag function and also
 // pass it as a prop to the ColumnContainer:
 type ColumnProps = {
     text: string
-    id:string
+    id: string
+    isPreview?: boolean
 }
 
-export const Column = ({text,id}:ColumnProps) => {
-    const {draggedItem, getTasksByListId,dispatch} = useAppState()
+export const Column = ({text, id, isPreview}: ColumnProps) => {
+    const {draggedItem, getTasksByListId, dispatch} = useAppState()
     const tasks = getTasksByListId(id)
     const ref = useRef<HTMLDivElement>(null)
-
-    const { drag } = useItemDrag({ type: "COLUMN", id, text })
-    drag(ref)
+    const [, drop] = useDrop({
+        accept: "COLUMN",
+        hover() {
+            if (!draggedItem) {
+                return
+            }
+            if (draggedItem.type === "COLUMN") {
+                if (draggedItem.id === id) {
+                    return
+                }
+                dispatch(moveList(draggedItem.id, id))
+            }
+        }
+    })
+    const {drag} = useItemDrag({
+        type: "COLUMN",
+        id,
+        text
+    })
+    drag(drop(ref))
 
 
     return (
-        <ColumnContainer ref={ref}>
+        <ColumnContainer
+            isPreview={isPreview}
+            ref={ref}
+            isHidden={isHidden(draggedItem, "COLUMN", id, isPreview)}
+        >
             <ColumnTitle>{text}</ColumnTitle>
-            {tasks.map(task => (
-                <Card text={task.text} key={task.id} id={task.id} />
+            {tasks.map((task) => (
+                <Card
+                    text={task.text}
+                    key={task.id}
+                    id={task.id}
+                    columnId={id}
+                />
             ))}
             <AddNewItem
-                toggleButtonText="+ Add another task"
-                onAdd={text =>
-                    dispatch(addTask(text, id))
-                }
+                toggleButtonText="+ Add another card"
+                onAdd={(text) => dispatch(addTask(text, id))}
                 dark
             />
         </ColumnContainer>
